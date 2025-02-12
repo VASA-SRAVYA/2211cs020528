@@ -1,0 +1,327 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyMuvhgkXkBzx9SDwzj7/dOK",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/VASA-SRAVYA/2211cs020528/blob/main/Cosine%20Similarity\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 4,
+      "metadata": {
+        "id": "Jbko0Uqh5ibq"
+      },
+      "outputs": [],
+      "source": [
+        "import nltk\n",
+        "import string\n",
+        "import numpy as np\n",
+        "from sklearn.feature_extraction.text import TfidfVectorizer\n",
+        "from sklearn.metrics.pairwise import cosine_similarity\n",
+        "from nltk.corpus import stopwords\n",
+        "from nltk.tokenize import word_tokenize\n",
+        "from nltk.stem import WordNetLemmatizer"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('punkt')\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "zmkppRaX5k6h",
+        "outputId": "9f9670a1-3ff8-421b-b30c-6e929b44f6fd"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package punkt to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping tokenizers/punkt.zip.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 5
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('punkt_tab')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "wzZMbCO57Fua",
+        "outputId": "2388cbf0-1476-4b3a-d515-7d2eba0f693f"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package punkt_tab to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping tokenizers/punkt_tab.zip.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 6
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('stopwords')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "4MQOxm6M7J8I",
+        "outputId": "6f774136-8acc-44bd-bfa9-65c23dcbfc58"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package stopwords to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping corpora/stopwords.zip.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download(\"wordnet\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "2YHnwcMl7OPB",
+        "outputId": "1c7a0541-f77f-46b2-9ee9-70dba366df4c"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package wordnet to /root/nltk_data...\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 8
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "review1='The movie was fantanstic! the acting and plot was good'\n",
+        "review2='the movie was boring'"
+      ],
+      "metadata": {
+        "id": "sjwwceDM8fPG"
+      },
+      "execution_count": 13,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "tokenize = word_tokenize(review1)\n",
+        "print(tokenize)\n",
+        "stop_words=set(stopwords.words('english'))\n",
+        "print(stop_words)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "3Sn-lhAp82BP",
+        "outputId": "9f2b3459-b24a-485e-ce1d-b5e0ed764e9d"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "['The', 'movie', 'was', 'fantanstic', '!', 'the', 'acting', 'and', 'plot', 'was', 'good']\n",
+            "{'ll', 'doesn', 'isn', 'such', 'that', 'had', 'do', 'doing', 'here', 've', 'shan', 'have', 'no', \"it's\", 'some', 'through', \"don't\", 'but', \"you'll\", 'will', 'his', 'where', 'or', 'has', 'for', 'haven', 'against', 'how', 'itself', 'those', 'from', 'if', 'above', 'mustn', 'you', 'her', 't', 's', 'myself', 'off', 'wouldn', 'your', 'into', 'what', \"shouldn't\", 'in', \"needn't\", 'an', 'didn', 'them', 'further', 'he', 'yourself', 'other', 'both', 'now', 're', \"you're\", \"weren't\", 'am', 'these', 'all', 'shouldn', 'ain', 'just', 'o', 'does', 'before', 'which', \"doesn't\", 'then', 'because', 'm', \"should've\", 'between', 'is', 'can', \"she's\", \"hasn't\", 'to', 'they', 'their', 'be', 'who', 'any', 'mightn', 'only', 'him', 'while', 'with', 'couldn', 'our', 'd', 'ours', 'my', 'yourselves', 'themselves', \"isn't\", 'a', 'ma', 'whom', 'too', 'was', 'himself', \"didn't\", \"couldn't\", 'when', 'below', 'not', \"shan't\", 'having', 'needn', 'this', 'more', 'so', 'most', 'over', 'and', \"mightn't\", 'its', 'weren', 'up', \"aren't\", 'are', 'yours', 'she', 'own', 'out', 'after', 'until', 'there', 'again', 'did', 'we', 'about', 'won', 'hadn', \"hadn't\", 'hers', \"you've\", 'at', 'hasn', \"wouldn't\", 'on', \"wasn't\", 'once', 'theirs', 'it', 'same', 'y', 'ourselves', \"you'd\", 'were', 'wasn', \"haven't\", 'few', 'should', 'down', 'why', 'than', 'aren', 'very', 'i', 'under', 'as', 'me', 'of', 'been', 'the', 'don', 'nor', 'herself', 'each', \"mustn't\", 'by', 'during', \"won't\", 'being', \"that'll\"}\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "def preprocess_text(text):\n",
+        "  tokenize = word_tokenize(text)\n",
+        "  tokenize=[word.lower() for word in tokenize]\n",
+        "  stop_words=set(stopwords.words('english'))\n",
+        "  tokenize=[word for word in tokenize if word not in stop_words]\n",
+        "  lemmatizer=WordNetLemmatizer()\n",
+        "  tokenize=[lemmatizer.lemmatize(word) for word in tokenize]\n",
+        "  return \" \".join(tokenize)\n",
+        ""
+      ],
+      "metadata": {
+        "id": "kAriQqiS7Rzs"
+      },
+      "execution_count": 15,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "a=preprocess_text(review1)\n",
+        "print(a)\n",
+        "b=preprocess_text(review2)\n",
+        "print(b)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "NiJFlT-y-Xyb",
+        "outputId": "db841509-706b-4081-b99c-3ec6534a2812"
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "movie fantanstic ! acting plot good\n",
+            "movie boring\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "vectorizer=TfidfVectorizer()\n",
+        "vectors=vectorizer.fit_transform([a,b])\n",
+        "print(vectors.toarray())"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "OTQ3u4A_-oto",
+        "outputId": "dee8af53-4106-42f2-d582-d42f3e2b667a"
+      },
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[[0.47107781 0.         0.47107781 0.47107781 0.33517574 0.47107781]\n",
+            " [0.         0.81480247 0.         0.         0.57973867 0.        ]]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "cosin_sim=cosine_similarity(vectors[0],vectors[1])[0][0]\n",
+        "print(round(cosin_sim,3))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "py8Xg7hB_IhA",
+        "outputId": "240ecf67-3648-4c58-e121-f094ec43fe3c"
+      },
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "0.194\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "JHBWRs8pBJkh"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
